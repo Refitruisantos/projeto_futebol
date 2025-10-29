@@ -71,6 +71,29 @@ alertas_df = pd.DataFrame.from_dict(alertas, orient="index")
 alertas_df.index.name = "jogador_id"
 st.dataframe(alertas_df)
 
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.download_button(
+        label="Exportar Perfis (CSV)",
+        data=pd.DataFrame.from_dict(perfis, orient='index').to_csv(index=True).encode('utf-8'),
+        file_name="perfis.csv",
+        mime="text/csv"
+    )
+with col2:
+    st.download_button(
+        label="Exportar Alertas (CSV)",
+        data=alertas_df.to_csv(index=True).encode('utf-8'),
+        file_name="alertas.csv",
+        mime="text/csv"
+    )
+with col3:
+    st.download_button(
+        label="Exportar Dados Filtrados (CSV)",
+        data=df.to_csv(index=False).encode('utf-8'),
+        file_name="dados_filtrados.csv",
+        mime="text/csv"
+    )
+
 st.subheader("Perfil Físico")
 try:
     from plotly.subplots import make_subplots
@@ -85,3 +108,26 @@ except Exception as e:
 
 with st.expander("Dados Filtrados"):
     st.dataframe(df)
+
+st.subheader("Evolução Temporal por Jogador")
+if df.empty:
+    st.info("Sem dados para séries temporais com os filtros atuais.")
+else:
+    jog_opts = sorted(df['jogador_id'].unique())
+    sel_jog = st.selectbox("Jogador", options=jog_opts)
+    metrica = st.selectbox("Métrica", options=["pse", "distancia_total", "sprints"], index=0)
+    roll_opt = st.selectbox("Rolling Média", options=["Sem rolling", "7 dias", "14 dias"], index=0)
+
+    ts = df[df['jogador_id'] == sel_jog][['data', metrica]].sort_values('data').copy()
+    ts = ts.dropna(subset=[metrica])
+    if roll_opt == "7 dias":
+        ts[metrica + "_roll"] = ts[metrica].rolling(window=7, min_periods=1).mean()
+    elif roll_opt == "14 dias":
+        ts[metrica + "_roll"] = ts[metrica].rolling(window=14, min_periods=1).mean()
+
+    import plotly.express as px
+    if (metrica + "_roll") in ts.columns:
+        fig_ts = px.line(ts, x='data', y=[metrica, metrica+"_roll"], labels={"value":"valor","data":"data","variable":"série"})
+    else:
+        fig_ts = px.line(ts, x='data', y=metrica)
+    st.plotly_chart(fig_ts, use_container_width=True)
