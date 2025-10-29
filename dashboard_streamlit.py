@@ -5,6 +5,7 @@ from dados import carregar_dados
 from perfil_jogador import gerar_perfis
 from modelo import treinar_modelo, prever_quebras
 from visualizacao import mostrar_dashboard
+from datetime import datetime
 
 st.set_page_config(page_title="Dashboard Rendimento - Futebol", layout="wide")
 
@@ -25,6 +26,16 @@ with st.sidebar:
     maxd = dados["data"].max()
     drange = st.date_input("Intervalo de Datas", value=(mind, maxd))
 
+    extra_filters = {}
+    if 'posicao' in dados.columns:
+        pos_opts = sorted([p for p in dados['posicao'].dropna().unique()])
+        sel_pos = st.multiselect("Posição", options=pos_opts, default=pos_opts)
+        extra_filters['posicao'] = sel_pos
+    if 'equipa' in dados.columns:
+        team_opts = sorted([t for t in dados['equipa'].dropna().unique()])
+        sel_team = st.multiselect("Equipa", options=team_opts, default=team_opts)
+        extra_filters['equipa'] = sel_team
+
     st.caption("Dica: Exporta os dados do Catapult e coloca os ficheiros em dados/gps.csv e dados/pse.csv")
 
 if sel_jogs:
@@ -36,9 +47,24 @@ if isinstance(drange, (list, tuple)) and len(drange) == 2:
     di, dfim = pd.to_datetime(drange[0]), pd.to_datetime(drange[1])
     df = df[(df["data"] >= di) & (df["data"] <= dfim)]
 
+if 'posicao' in df.columns and 'posicao' in locals() and extra_filters.get('posicao') is not None:
+    if extra_filters['posicao']:
+        df = df[df['posicao'].isin(extra_filters['posicao'])]
+if 'equipa' in df.columns and 'equipa' in locals() and extra_filters.get('equipa') is not None:
+    if extra_filters['equipa']:
+        df = df[df['equipa'].isin(extra_filters['equipa'])]
+
 perfis = gerar_perfis(df)
 modelo = treinar_modelo(perfis, model_type=model_type)
 alertas = prever_quebras(modelo, perfis)
+
+try:
+    os.makedirs('outputs', exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    pd.DataFrame.from_dict(perfis, orient='index').to_csv(f"outputs/perfis_{ts}.csv")
+    pd.DataFrame.from_dict(alertas, orient='index').to_csv(f"outputs/alertas_{ts}.csv")
+except Exception as e:
+    st.warning(f"Não foi possível guardar outputs: {e}")
 
 st.subheader("Alertas por Jogador")
 alertas_df = pd.DataFrame.from_dict(alertas, orient="index")
