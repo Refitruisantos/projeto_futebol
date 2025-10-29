@@ -1,8 +1,9 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 import os
+from sklearn.linear_model import LogisticRegression
 
-def treinar_modelo(perfis):
+def treinar_modelo(perfis, model_type: str = 'rf'):
     X = []
     y = []
 
@@ -36,8 +37,12 @@ def treinar_modelo(perfis):
     if X.size == 0:
         return RandomForestClassifier()
 
-    modelo = RandomForestClassifier(random_state=42)
-    modelo.fit(X, y)
+    if (model_type or '').lower() in ['logreg', 'logistic', 'lr']:
+        modelo = LogisticRegression(max_iter=1000, solver='lbfgs', class_weight='balanced', random_state=42)
+        modelo.fit(X, y)
+    else:
+        modelo = RandomForestClassifier(random_state=42)
+        modelo.fit(X, y)
     modelo.feature_names_ = feature_names
     modelo.col_means_ = col_means
     return modelo
