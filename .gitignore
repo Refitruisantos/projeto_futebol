@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.dist/
+build/
+.eggs/
+.mypy_cache/
+.pytype/
+.pytest_cache/
+.coverage*
+htmlcov/
+.ipynb_checkpoints/
+
+# Virtual envs
+.venv/
+venv/
+ENV/
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project data (keep data local, not versioned)
+dados/*.csv
+!dados/README.md
