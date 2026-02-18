@@ -1,0 +1,39 @@
+name: Frontend Build
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'TESE_DOUTORAMENTO/09_IMPLEMENTACAO_TECNICA/frontend/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'TESE_DOUTORAMENTO/09_IMPLEMENTACAO_TECNICA/frontend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: TESE_DOUTORAMENTO/09_IMPLEMENTACAO_TECNICA/frontend/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: TESE_DOUTORAMENTO/09_IMPLEMENTACAO_TECNICA/frontend
+      run: npm ci
+    
+    - name: Build
+      working-directory: TESE_DOUTORAMENTO/09_IMPLEMENTACAO_TECNICA/frontend
+      run: npm run build
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-build
+        path: TESE_DOUTORAMENTO/09_IMPLEMENTACAO_TECNICA/frontend/dist
