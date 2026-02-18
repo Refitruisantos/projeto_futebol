@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 import os
 from sklearn.linear_model import LogisticRegression
+import shap
 
 def treinar_modelo(perfis, model_type: str = 'rf'):
     X = []
@@ -75,3 +76,43 @@ def prever_quebras(modelo, perfis):
             alertas[jogador] = {"risco": risco, "prob": None}
 
     return alertas
+
+def explicar_shap(modelo, perfis):
+    explicacoes = {}
+    if not hasattr(modelo, "classes_"):
+        return explicacoes
+    fn = getattr(modelo, 'feature_names_', None)
+    cm = getattr(modelo, 'col_means_', None)
+    if fn is None or cm is None:
+        return explicacoes
+    # construir matriz X na mesma ordem das features
+    jogadores = list(perfis.keys())
+    X = np.array([[perfis[j].get(k, np.nan) for k in fn] for j in jogadores], dtype=float)
+    mask = np.isnan(X)
+    if mask.any():
+        X[mask] = cm[np.where(mask)[1]]
+
+    try:
+        if isinstance(modelo, RandomForestClassifier):
+            explainer = shap.TreeExplainer(modelo)
+            shap_values = explainer.shap_values(X)
+            # classe 1 (risco): índice 1
+            sv = shap_values[1] if isinstance(shap_values, list) else shap_values
+        elif isinstance(modelo, LogisticRegression):
+            explainer = shap.LinearExplainer(modelo, X, feature_perturbation="interventional")
+            sv = explainer.shap_values(X)
+        else:
+            return explicacoes
+        # mapear por jogador
+        for i, jid in enumerate(jogadores):
+            contrib = {fn[k]: float(sv[i, k]) for k in range(len(fn))}
+            # ordenar por importância absoluta
+            top = sorted(contrib.items(), key=lambda x: abs(x[1]), reverse=True)
+            explicacoes[jid] = {
+                'contribuicoes': contrib,
+                'top3': top[:3]
+            }
+    except Exception:
+        # sem SHAP disponível para este modelo/ambiente
+        pass
+    return explicacoes

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend Video Analyses</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .analysis { border: 1px solid #ccc; margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .completed { background-color: #f0f9ff; border-color: #0ea5e9; }
+        .indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+        .green { background-color: #10b981; }
+        .blue { background-color: #3b82f6; animation: pulse 2s infinite; }
+        .red { background-color: #ef4444; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+    <h1>🎬 Test Frontend Video Analyses Display</h1>
+    <div id="status"></div>
+    
+    <h2>Session 362 Analyses</h2>
+    <button onclick="testSession362Analyses()">Load Session 362 Analyses</button>
+    <div id="session362"></div>
+    
+    <h2>Session 360 Analyses</h2>
+    <button onclick="testSession360Analyses()">Load Session 360 Analyses</button>
+    <div id="session360"></div>
+    
+    <h2>All Completed Analyses</h2>
+    <button onclick="loadAllCompletedAnalyses()">Load All Completed Analyses</button>
+    <div id="allAnalyses"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = `<p><strong>${new Date().toLocaleTimeString()}</strong>: ${message}</p>`;
+        }
+        
+        function createAnalysisCard(analysis) {
+            const statusClass = analysis.status === 'completed' ? 'completed' : '';
+            const indicatorClass = analysis.status === 'completed' ? 'green' : 
+                                 analysis.status === 'processing' ? 'blue' : 'red';
+            const icon = analysis.status === 'completed' ? '📹' : 
+                        analysis.status === 'processing' ? '⏳' : '❌';
+            
+            return `
+                <div class="analysis ${statusClass}">
+                    <div style="display: flex; justify-content: between; align-items: center;">
+                        <div>
+                            <span class="indicator ${indicatorClass}"></span>
+                            <strong>Analysis ${analysis.analysis_id.substring(0, 8)}...</strong>
+                            <span style="margin-left: 10px;">${icon}</span>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <span style="background: #e5e7eb; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
+                                ${analysis.status.toUpperCase()}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 14px; color: #6b7280;">
+                        Type: ${analysis.analysis_type} | Created: ${new Date(analysis.created_at).toLocaleString()}
+                        ${analysis.completed_at ? ` | Completed: ${new Date(analysis.completed_at).toLocaleString()}` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function testSession362Analyses() {
+            updateStatus('Loading analyses for session 362...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/computer-vision/session/362/analyses`);
+                
+                if (response.ok) {
+                    const analyses = await response.json();
+                    updateStatus(`✅ Found ${analyses.length} analyses for session 362`);
+                    
+                    const container = document.getElementById('session362');
+                    if (analyses.length === 0) {
+                        container.innerHTML = '<p>No analyses found for session 362</p>';
+                    } else {
+                        container.innerHTML = analyses.map(createAnalysisCard).join('');
+                    }
+                } else {
+                    updateStatus(`❌ Failed to load session 362 analyses: ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(`❌ Error loading session 362 analyses: ${error.message}`);
+            }
+        }
+        
+        async function testSession360Analyses() {
+            updateStatus('Loading analyses for session 360...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/computer-vision/session/360/analyses`);
+                
+                if (response.ok) {
+                    const analyses = await response.json();
+                    updateStatus(`✅ Found ${analyses.length} analyses for session 360`);
+                    
+                    const container = document.getElementById('session360');
+                    if (analyses.length === 0) {
+                        container.innerHTML = '<p>No analyses found for session 360</p>';
+                    } else {
+                        container.innerHTML = analyses.map(createAnalysisCard).join('');
+                    }
+                } else {
+                    updateStatus(`❌ Failed to load session 360 analyses: ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(`❌ Error loading session 360 analyses: ${error.message}`);
+            }
+        }
+        
+        async function loadAllCompletedAnalyses() {
+            updateStatus('Loading all completed analyses...');
+            
+            // Since there's no "all analyses" endpoint, we'll check a few sessions
+            const sessionsToCheck = [360, 362, 314, 303, 298];
+            let allAnalyses = [];
+            
+            for (const sessionId of sessionsToCheck) {
+                try {
+                    const response = await fetch(`${API_BASE}/computer-vision/session/${sessionId}/analyses`);
+                    if (response.ok) {
+                        const analyses = await response.json();
+                        allAnalyses = allAnalyses.concat(analyses.map(a => ({...a, sessionId})));
+                    }
+                } catch (error) {
+                    console.log(`No analyses for session ${sessionId}`);
+                }
+            }
+            
+            updateStatus(`✅ Found ${allAnalyses.length} total analyses across checked sessions`);
+            
+            const container = document.getElementById('allAnalyses');
+            if (allAnalyses.length === 0) {
+                container.innerHTML = '<p>No analyses found</p>';
+            } else {
+                container.innerHTML = allAnalyses.map(analysis => {
+                    const card = createAnalysisCard(analysis);
+                    return card.replace('<strong>Analysis', `<strong>Session ${analysis.sessionId} - Analysis`);
+                }).join('');
+            }
+        }
+        
+        // Test connectivity on page load
+        window.onload = async function() {
+            try {
+                const response = await fetch(`${API_BASE}/computer-vision/models/info`);
+                if (response.ok) {
+                    updateStatus('✅ Backend server is reachable - Ready to test analyses');
+                } else {
+                    updateStatus('❌ Backend server error: ' + response.status);
+                }
+            } catch (error) {
+                updateStatus('❌ Cannot connect to backend server: ' + error.message);
+            }
+        };
+    </script>
+</body>
+</html>

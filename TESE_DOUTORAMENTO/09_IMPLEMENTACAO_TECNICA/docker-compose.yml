@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # PostgreSQL + TimescaleDB
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    container_name: futebol_tese_db
+    restart: unless-stopped
+    
+    ports:
+      - "5432:5432"
+    
+    environment:
+      POSTGRES_DB: futebol_tese
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: futebol2024
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      TIMESCALEDB_TELEMETRY: "off"
+    
+    volumes:
+      # Persistir dados
+      - timescaledb_data:/var/lib/postgresql/data
+      
+      # Scripts de inicialização (executados automaticamente)
+      - ./sql/01_criar_schema.sql:/docker-entrypoint-initdb.d/01_criar_schema.sql
+      - ./sql/02_criar_hypertables.sql:/docker-entrypoint-initdb.d/02_criar_hypertables.sql
+      - ./sql/03_indices_otimizacao.sql:/docker-entrypoint-initdb.d/03_indices_otimizacao.sql
+    
+    networks:
+      - futebol_network
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d futebol_tese"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  # pgAdmin (Interface Web para PostgreSQL) - OPCIONAL
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: futebol_pgadmin
+    restart: unless-stopped
+    
+    ports:
+      - "5050:80"
+    
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@futebol.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    
+    networks:
+      - futebol_network
+    
+    depends_on:
+      - timescaledb
+
+volumes:
+  timescaledb_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  futebol_network:
+    driver: bridge

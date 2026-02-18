@@ -1,0 +1,7 @@
+date,tipo,local,jornada,duracao_min,weather_conditions,intensity_level,tactical_focus,physical_focus
+2025-01-20,treino,casa,6,75,Cold 8°C Clear,Low,Recovery,Active Recovery
+2025-01-21,treino,casa,6,90,Cold 6°C Cloudy,Medium,Technical,Ball Skills
+2025-01-22,treino,casa,6,105,Cold 4°C Light Rain,Medium-High,Tactical,Positional Play
+2025-01-23,treino,casa,6,120,Cold 2°C Clear,High,Physical,Conditioning
+2025-01-24,treino,casa,6,60,Cold 5°C Clear,Low,Pre-Match,Activation
+2025-01-25,jogo,casa,6,90,Cold 3°C Windy,Match,Competitive,Match Performance

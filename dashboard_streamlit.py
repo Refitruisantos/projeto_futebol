@@ -1,9 +1,10 @@
 import os
 import pandas as pd
 import streamlit as st
+import numpy as np
 from dados import carregar_dados
-from perfil_jogador import gerar_perfis
-from modelo import treinar_modelo, prever_quebras
+from perfil_jogador import gerar_perfis, calcular_baseline, calcular_delta_ri
+from modelo import treinar_modelo, prever_quebras, explicar_shap
 from visualizacao import mostrar_dashboard
 from datetime import datetime
 from utils import segmentar_fases_jogo, agregar_janelas_5min
@@ -215,6 +216,23 @@ if required_cols.issubset(set(df.columns)) and has_time_col:
             st.write("Janelas com queda detetada (regras: ", drop_pct, "%, ", cons_win, " janelas seguidas):")
             st.dataframe(alerts_w)
 
+            # Exportações intra-jogo
+            c1, c2 = st.columns(2)
+            with c1:
+                st.download_button(
+                    label="Exportar Janelas (CSV)",
+                    data=w.to_csv(index=False).encode('utf-8'),
+                    file_name="intra_jogo_janelas.csv",
+                    mime="text/csv"
+                )
+            with c2:
+                st.download_button(
+                    label="Exportar Quedas (CSV)",
+                    data=alerts_w.to_csv(index=False).encode('utf-8'),
+                    file_name="intra_jogo_quedas.csv",
+                    mime="text/csv"
+                )
+
             # Plot por jogador/jogo
             jog_plot_opts = sorted(w[['jogador_id','jogo_id']].drop_duplicates().itertuples(index=False, name=None))
             if jog_plot_opts:
@@ -262,3 +280,96 @@ def gerar_relatorio_html():
 
 report_bytes = gerar_relatorio_html()
 st.download_button(label="Gerar Relatório (HTML)", data=report_bytes, file_name="relatorio_rendimento.html", mime="text/html")
+
+# Risco Composto (ΔRᵢ + Intra-jogo + Probabilidade do modelo)
+st.subheader("Risco Composto")
+try:
+    baselines_dash = calcular_baseline(df, n_datas=5)
+    deltas_dash = calcular_delta_ri(df, baselines_dash, k_sessoes=3)
+    # construir dataframe com probabilidade do modelo
+    prob_series = alertas_df.get('prob') if 'prob' in alertas_df.columns else None
+    rows = []
+    for jid in df['jogador_id'].dropna().unique():
+        dRi = (deltas_dash.get(jid, {}) or {}).get('delta_Ri', None)
+        prob = float(prob_series.loc[jid]) if (prob_series is not None and jid in prob_series.index and pd.notna(prob_series.loc[jid])) else None
+        # severidade intra-jogo: percentil de quedas por jogador (se existir)
+        sev = None
+        try:
+            if 'w' in locals():
+                subw_all = w[w['jogador_id']==jid]
+                if not subw_all.empty:
+                    # severidade como max((baseline - valor)/baseline)
+                    sev = float(((subw_all['baseline'] - subw_all[met_sel]) / subw_all['baseline']).clip(lower=0).max())
+        except Exception:
+            pass
+        # normalizações simples
+        # |ΔRᵢ| -> [0,1] via sigmoid aproximada
+        def sigmoid_scale(x):
+            try:
+                return float(1 / (1 + np.exp(-abs(x))))
+            except Exception:
+                return None
+        s_dri = sigmoid_scale(dRi) if dRi is not None else None
+        s_prob = prob if prob is not None else None
+        s_sev = sev if sev is not None else None
+        # combinar média ponderada simples (pesos iguais quando existem)
+        comps = [v for v in [s_prob, s_sev, s_dri] if v is not None]
+        comp_score = float(np.mean(comps)) if comps else None
+        rows.append({'jogador_id': jid, 'prob': s_prob, 'intra_sev': s_sev, 'deltaRi_scaled': s_dri, 'risco_composto': comp_score})
+    rc = pd.DataFrame(rows).set_index('jogador_id')
+    st.dataframe(rc)
+    st.download_button("Exportar Risco Composto (CSV)", data=rc.to_csv().encode('utf-8'), file_name="risco_composto.csv", mime="text/csv")
+except Exception as e:
+    st.warning(f"Não foi possível calcular risco composto: {e}")
+
+# Explicabilidade (SHAP)
+st.subheader("Porque este alerta? (SHAP)")
+try:
+    expl = explicar_shap(modelo, perfis)
+    if not expl:
+        st.info("SHAP não disponível para o modelo atual ou sem dados suficientes.")
+    else:
+        jog_opts_shap = [j for j in expl.keys()]
+        sel_jog_shap = st.selectbox("Jogador para explicação", options=jog_opts_shap)
+        contrib = expl[sel_jog_shap]['contribuicoes']
+        top3 = expl[sel_jog_shap]['top3']
+        st.write("Top 3 contribuições:", top3)
+        import plotly.express as px
+        dfc = pd.DataFrame({"feature": list(contrib.keys()), "valor": list(contrib.values())})
+        dfc = dfc.sort_values(by='valor')
+        fig_shap = px.bar(dfc, x='valor', y='feature', orientation='h', title=f"Contribuições SHAP - Jogador {sel_jog_shap}")
+        st.plotly_chart(fig_shap, use_container_width=True)
+except Exception as e:
+    st.warning(f"Falha ao calcular/mostrar SHAP: {e}")
+
+# KPIs e validação
+st.subheader("KPIs de Validação")
+st.caption("Carrega CSVs opcionais para avaliar concordância e impacto.")
+colu1, colu2 = st.columns(2)
+with colu1:
+    up_dec = st.file_uploader("Decisões técnicas (substituições)", type=['csv'], key='decisoes')
+with colu2:
+    up_inj = st.file_uploader("Registos de lesões/carga", type=['csv'], key='lesoes')
+
+try:
+    if up_dec is not None:
+        decis = pd.read_csv(up_dec)
+        # esperado: jogador_id, jogo_id, substituted (0/1)
+        cols_need = {'jogador_id','jogo_id','substituted'}
+        if cols_need.issubset(set(decis.columns)) and not alertas_df.empty:
+            # juntar prob/risco ao nível de jogador (se houver jogo_id, simplificação por agora)
+            decis_agg = decis.groupby('jogador_id', as_index=False)['substituted'].max()
+            a = alertas_df.copy()
+            a['jogador_id'] = a.index
+            join = decis_agg.merge(a[['jogador_id','risco']], on='jogador_id', how='left') if 'risco' in a.columns else decis_agg
+            if 'risco' in join.columns:
+                concord = float((join['substituted']==1).eq(join['risco']==1).mean())
+                st.metric("Concordância alerta vs substituição", f"{concord*100:.1f}%")
+            st.dataframe(join)
+    if up_inj is not None:
+        inj = pd.read_csv(up_inj)
+        # exemplo esperado: jogador_id, data, tipo_lesao, dias_ausencia
+        st.write("Registos de lesões/carga carregados:")
+        st.dataframe(inj.head())
+except Exception as e:
+    st.warning(f"Não foi possível calcular KPIs: {e}")

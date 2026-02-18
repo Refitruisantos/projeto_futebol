@@ -1,0 +1,125 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.log
+*.pot
+*.pyc
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+.npmrc
+
+# Production builds
+frontend/dist/
+frontend/build/
+backend/dist/
+backend/build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+pgdata/
+
+# ML Models - Large files excluded from GitHub
+backend/ml_analysis/saved_models/*.pkl
+backend/ml_analysis/saved_models/*.joblib
+backend/models/*.pkl
+
+# YOLOv8 Models (too large for GitHub - download separately)
+backend/yolov8*.pt
+*.pt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Video files (large)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+uploads/videos/
+backend/uploads/videos/
+
+# PDF reports (if sensitive)
+# *.pdf
+# uploads/pdfs/
+
+# CSV data files (if sensitive/large)
+# *.csv
+# dados/*.csv
+
+# Screenshots for pitch deck (keep these)
+!pitch_deck/screenshots/
+
+# Test outputs
+test_*.txt
+debug_*.txt
+outputs/
+
+# Docker
+docker-compose.override.yml

@@ -1,0 +1,44 @@
+# Computer Vision Dependencies for Football Analytics
+# Install with: pip install -r requirements_cv.txt
+
+# Core computer vision libraries
+ultralytics>=8.2.0          # YOLOv8 for object detection
+opencv-python>=4.8.0        # Computer vision operations
+numpy>=1.24.0               # Numerical operations
+Pillow>=10.0.0              # Image processing
+
+# Deep learning frameworks
+torch>=2.0.0                # PyTorch for neural networks
+torchvision>=0.15.0         # Computer vision models and transforms
+
+# Video processing
+moviepy>=1.0.3              # Video editing and processing
+imageio>=2.31.0             # Image and video I/O
+imageio-ffmpeg>=0.4.8       # FFmpeg wrapper for video processing
+
+# Data handling
+pandas>=2.0.0               # Data manipulation
+scipy>=1.10.0               # Scientific computing
+
+# Visualization (optional, for debugging)
+matplotlib>=3.7.0           # Plotting and visualization
+seaborn>=0.12.0             # Statistical visualization
+
+# Progress tracking
+tqdm>=4.65.0                # Progress bars
+
+# Additional utilities
+pathlib2>=2.3.7             # Path handling (Python < 3.4 compatibility)
+psutil>=5.9.0               # System monitoring for resource usage
+
+# Optional: GPU acceleration (uncomment if you have NVIDIA GPU)
+# torch-audio>=2.0.0
+# torchaudio>=2.0.0
+
+# Optional: Advanced video codecs
+# ffmpeg-python>=0.2.0
+
+# Note: For production deployment, consider:
+# - Installing CUDA-enabled PyTorch for GPU acceleration
+# - Using Docker containers with pre-installed dependencies
+# - Setting up model caching to avoid re-downloading weights

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug CV Frontend</title>
+</head>
+<body>
+    <h1>Debug Computer Vision Frontend</h1>
+    <div id="status"></div>
+    
+    <h2>Test Session 362 Analyses</h2>
+    <button onclick="testSession362()">Test Session 362 Analyses</button>
+    
+    <h2>Test Specific Analysis</h2>
+    <button onclick="testSpecificAnalysis()">Test Analysis 3f0ac8ec</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        
+        function log(message) {
+            const results = document.getElementById('results');
+            results.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log(message);
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+        }
+        
+        async function testSession362() {
+            log('🔍 Testing session 362 analyses...');
+            updateStatus('Testing session 362 analyses...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/computer-vision/session/362/analyses`);
+                log(`Session 362 analyses status: ${response.status}`);
+                
+                if (response.ok) {
+                    const analyses = await response.json();
+                    log(`✅ Found ${analyses.length} analyses for session 362:`);
+                    analyses.forEach(analysis => {
+                        log(`  - ${analysis.analysis_id.substring(0, 8)}... | ${analysis.status} | ${analysis.created_at}`);
+                    });
+                    updateStatus(`Found ${analyses.length} analyses for session 362`);
+                } else {
+                    const error = await response.text();
+                    log(`❌ Session 362 analyses failed: ${error}`);
+                    updateStatus(`Session 362 analyses failed: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Session 362 analyses error: ${error.message}`);
+                updateStatus(`Session 362 analyses error: ${error.message}`);
+            }
+        }
+        
+        async function testSpecificAnalysis() {
+            log('🎬 Testing specific analysis...');
+            updateStatus('Testing specific analysis...');
+            
+            const analysisId = '3f0ac8ec-c329-4a55-b1a7-8ed5c1ce5ee0';
+            
+            try {
+                const response = await fetch(`${API_BASE}/computer-vision/analysis/${analysisId}`);
+                log(`Analysis ${analysisId.substring(0, 8)} status: ${response.status}`);
+                
+                if (response.ok) {
+                    const analysis = await response.json();
+                    log(`✅ Analysis details:`);
+                    log(`  Status: ${analysis.status}`);
+                    log(`  Session ID: ${analysis.session_id}`);
+                    log(`  Results: ${JSON.stringify(analysis.results)}`);
+                    log(`  Created: ${analysis.created_at}`);
+                    log(`  Completed: ${analysis.completed_at}`);
+                    updateStatus(`Analysis ${analysisId.substring(0, 8)} is ${analysis.status}`);
+                } else {
+                    const error = await response.text();
+                    log(`❌ Analysis failed: ${error}`);
+                    updateStatus(`Analysis failed: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Analysis error: ${error.message}`);
+                updateStatus(`Analysis error: ${error.message}`);
+            }
+        }
+        
+        // Test basic connectivity on page load
+        window.onload = async function() {
+            try {
+                const response = await fetch(`${API_BASE}/computer-vision/models/info`);
+                if (response.ok) {
+                    log('✅ Backend server is reachable');
+                    updateStatus('Backend server is reachable');
+                } else {
+                    log('❌ Backend server returned error: ' + response.status);
+                    updateStatus('Backend server error: ' + response.status);
+                }
+            } catch (error) {
+                log('❌ Cannot connect to backend server: ' + error.message);
+                updateStatus('Cannot connect to backend server');
+            }
+        };
+    </script>
+</body>
+</html>

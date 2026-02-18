@@ -1,0 +1,21 @@
+jogador_id,nome_completo,data_nascimento,posicao,numero_camisola,altura_cm,massa_kg,pe_dominante,ativo
+ATL001,Tiago Silva,1996-10-09,GR,1,199,83.0,Direito,True
+ATL002,Diogo Martins,1995-02-18,DC,2,191,82.5,Esquerdo,True
+ATL003,Carlos Oliveira,2005-01-22,DC,3,189,87.8,Direito,True
+ATL004,Tiago Ribeiro,2000-02-13,DL,4,184,75.6,Esquerdo,True
+ATL005,Miguel Pinto,1996-03-12,DL,5,176,76.0,Esquerdo,True
+ATL006,Luís Santos,2005-10-21,MC,6,177,70.0,Direito,True
+ATL007,João Ferreira,1995-05-21,MC,7,177,76.2,Ambos,True
+ATL008,Bruno Martins,2006-04-27,MC,8,180,72.8,Direito,True
+ATL009,Ricardo Carvalho,2005-04-19,EX,9,175,67.8,Ambos,True
+ATL010,João Ribeiro,1992-07-21,EX,10,169,68.4,Esquerdo,True
+ATL011,Bruno Ribeiro,2000-12-18,AV,11,178,81.2,Ambos,True
+ATL012,Luís Martins,1994-10-13,AV,12,177,85.0,Esquerdo,True
+ATL013,Marco Pinto,2003-09-16,GR,13,186,87.9,Direito,True
+ATL014,Diogo Silva,2003-11-06,DC,14,193,82.8,Ambos,True
+ATL015,André Lopes,1995-07-20,DL,15,178,79.7,Esquerdo,True
+ATL016,Gonçalo Jesus,2007-11-24,MC,16,178,77.2,Direito,True
+ATL017,Rafael Rodrigues,1997-02-10,EX,17,170,70.9,Esquerdo,True
+ATL018,Gonçalo Pereira,1999-09-25,AV,18,186,83.7,Direito,True
+ATL019,Miguel Gomes,1998-11-17,MC,19,176,69.8,Ambos,True
+ATL020,Tiago Gonçalves,2002-09-25,DC,20,180,82.8,Ambos,True

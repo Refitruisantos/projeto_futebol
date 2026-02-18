@@ -1,0 +1,4 @@
+player,total_distance_m,max_velocity_kmh,acc_b1_3_total_efforts,decel_b1_3_total_efforts,efforts_over_19_8_kmh,distance_over_19_8_kmh,efforts_over_25_2_kmh,velocity_b3_plus_total_efforts
+PLAYER_NAME_1,8456.3,29.2,45,42,18,287.4,8,67
+PLAYER_NAME_2,7234.7,28.8,48,44,16,265.8,7,64
+PLAYER_NAME_3,8567.9,29.5,52,47,19,312.6,9,71

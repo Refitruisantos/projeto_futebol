@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma de Análise de Performance no Futebol — Pitch Deck</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark-100: #0d0f13;
+      --dark-200: #13161c;
+      --dark-300: #1b1e25;
+      --pitch: #4caf50;
+      --pitch-dark: #2e7d32;
+      --cyan: #00bcd4;
+      --gold: #ffc107;
+      --red: #ef5350;
+      --orange: #ff9800;
+      --purple: #a855f7;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--dark-100);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ===== SLIDE SYSTEM ===== */
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 20% 50%, rgba(76,175,80,0.03) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, rgba(0,188,212,0.02) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .slide-number {
+      position: absolute;
+      bottom: 30px;
+      right: 40px;
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .slide-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pitch), var(--cyan));
+      border-radius: 2px;
+      margin: 20px 0;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+    h3 { font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
+    h4 { font-size: 1.1rem; font-weight: 600; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--pitch), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle { font-size: 1.25rem; color: var(--text-muted); font-weight: 400; line-height: 1.6; max-width: 700px; }
+    .label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--pitch); margin-bottom: 12px; }
+
+    /* ===== GRID LAYOUTS ===== */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--dark-200);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 32px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover { transform: translateY(-2px); border-color: rgba(76,175,80,0.2); }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-top: 8px; }
+
+    /* ===== ARCHITECTURE DIAGRAM ===== */
+    .arch-diagram {
+      background: var(--dark-200);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 48px;
+      position: relative;
+    }
+
+    .arch-layer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .arch-label {
+      width: 120px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .arch-boxes {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .arch-box {
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      flex: 1;
+      text-align: center;
+      border: 1px solid;
+    }
+
+    .arch-arrow {
+      width: 120px;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .arch-arrow-line {
+      width: 2px;
+      height: 24px;
+      background: rgba(255,255,255,0.1);
+      position: relative;
+    }
+
+    .arch-arrow-line::after {
+      content: '▼';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      color: rgba(255,255,255,0.15);
+    }
+
+    /* ===== FEATURE TABLE ===== */
+    .feature-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.85rem;
+    }
+
+    .feature-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .feature-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--text-muted);
+    }
+
+    .feature-table tr:hover td { background: rgba(76,175,80,0.03); }
+
+    /* ===== BADGES ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-green { background: rgba(76,175,80,0.1); color: var(--pitch); border: 1px solid rgba(76,175,80,0.2); }
+    .badge-cyan { background: rgba(0,188,212,0.1); color: var(--cyan); border: 1px solid rgba(0,188,212,0.2); }
+    .badge-gold { background: rgba(255,193,7,0.1); color: var(--gold); border: 1px solid rgba(255,193,7,0.2); }
+    .badge-red { background: rgba(239,83,80,0.1); color: var(--red); border: 1px solid rgba(239,83,80,0.2); }
+    .badge-purple { background: rgba(168,85,247,0.1); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+
+    /* ===== COMPARISON TABLE ===== */
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th, .compare-table td { padding: 18px 24px; text-align: left; font-size: 0.9rem; }
+    .compare-table th { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
+    .compare-table td { border-top: 1px solid rgba(255,255,255,0.04); }
+    .compare-table .col-old { color: var(--text-dim); }
+    .compare-table .col-new { color: var(--pitch); font-weight: 500; }
+
+    /* ===== STATS ===== */
+    .stat-number { font-size: 3rem; font-weight: 900; line-height: 1; }
+    .stat-label { font-size: 0.8rem; color: var(--text-dim); margin-top: 6px; }
+
+    /* ===== SCREENSHOT PLACEHOLDER ===== */
+    .screenshot-placeholder {
+      background: var(--dark-300);
+      border: 2px dashed rgba(255,255,255,0.08);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screenshot-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(76,175,80,0.02), rgba(0,188,212,0.02));
+    }
+
+    .screenshot-placeholder .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+    .screenshot-placeholder .hint { font-size: 0.7rem; color: var(--text-dim); opacity: 0.5; margin-top: 4px; }
+
+    .screenshot-img {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    /* ===== FORMULA BOX ===== */
+    .formula-box {
+      background: var(--dark-300);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan);
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    /* ===== FLOW DIAGRAM ===== */
+    .flow-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .flow-box {
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .flow-arrow {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.15);
+    }
+
+    /* ===== NAVIGATION ===== */
+    .nav-dots {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .nav-dot:hover, .nav-dot.active { background: var(--pitch); transform: scale(1.3); }
+
+    /* ===== PRINT ===== */
+    @media print {
+      .slide { page-break-after: always; min-height: auto; padding: 40px; }
+      .nav-dots { display: none; }
+    }
+
+    /* ===== TIMELINE ===== */
+    .timeline { position: relative; padding-left: 40px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--pitch), var(--cyan));
+      border-radius: 1px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -34px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--pitch);
+      border: 2px solid var(--dark-100);
+    }
+
+    .timeline-item h4 { margin-bottom: 4px; }
+    .timeline-item p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<!-- ============================================================ -->
+<!-- SLIDE 1: TITLE -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-1" style="justify-content: center; align-items: center; text-align: center;">
+  <div class="label">Proposta de Colaboração — Tese de Doutoramento</div>
+  <h1 style="max-width: 900px;">
+    Predição de Substituições<br>
+    <span class="gradient-text">no Futebol com Machine Learning</span>
+  </h1>
+  <div class="slide-divider" style="margin: 24px auto;"></div>
+  <p class="subtitle" style="text-align: center; margin: 0 auto;">
+    Investigação de doutoramento em Ciências do Desporto<br>
+    Desenvolvimento de um modelo preditivo para o momento ótimo de substituição ao longo do jogo
+  </p>
+  <div style="margin-top: 40px; display: flex; gap: 12px; justify-content: center;">
+    <span class="badge badge-green">Tese de Doutoramento</span>
+    <span class="badge badge-cyan">Machine Learning</span>
+    <span class="badge badge-gold">Predição de Substituições</span>
+  </div>
+  <p style="margin-top: 32px; color: var(--text-dim); font-size: 0.9rem;">[Nome do Investigador] · [Universidade] · [Orientador]</p>
+  <div class="slide-number">01 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 2: RESEARCH CONTEXT -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-2">
+  <div class="label">Contexto da Investigação</div>
+  <h2>Objetivo da <span class="gradient-text">Tese de Doutoramento</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-2" style="margin-top: 32px;">
+    <div>
+      <p class="subtitle" style="margin-bottom: 32px;">
+        Desenvolver e validar um modelo preditivo baseado em Machine Learning capaz de recomendar o <strong style="color: var(--pitch);">momento ótimo de substituição</strong> ao longo de um jogo de futebol, integrando múltiplas fontes de dados.
+      </p>
+
+      <div class="card" style="padding: 24px; margin-bottom: 16px;">
+        <h4 style="margin-bottom: 8px;">Pergunta de Investigação</h4>
+        <p style="color: var(--cyan); font-style: italic; font-size: 0.95rem;">
+          "É possível prever, com base em dados de GPS, carga de treino, bem-estar e análise de vídeo, qual o momento ótimo para efetuar substituições durante um jogo, maximizando a performance coletiva?"
+        </p>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <h4 style="margin-bottom: 8px;">Hipótese Central</h4>
+        <p>A integração de dados multi-fonte com modelos de ML explicáveis (XGBoost + SHAP) permite identificar padrões de queda de performance em tempo real, antecipando a necessidade de substituição antes que o rendimento se deteriore significativamente.</p>
+      </div>
+    </div>
+
+    <div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card" style="padding: 20px; border-left: 3px solid var(--pitch);">
+          <h4>Fase 1 — Concluída</h4>
+          <p>Desenvolvimento da plataforma de recolha e integração de dados (GPS, PSE, Wellness, Vídeo)</p>
+        </div>
+        <div class="card" style="padding: 20px; border-left: 3px solid var(--cyan);">
+          <h4>Fase 2 — Concluída</h4>
+          <p>Implementação do modelo ML de predição de queda de performance com explicabilidade SHAP</p>
+        </div>
+        <div class="card" style="padding: 20px; border-left: 3px solid var(--gold);">
+          <h4>Fase 3 — Em curso</h4>
+          <p>Extensão para predição de substituições em tempo de jogo — <strong style="color: var(--gold);">necessita dados reais de jogo</strong></p>
+        </div>
+        <div class="card" style="padding: 20px; border-left: 3px solid var(--purple);">
+          <h4>Fase 4 — Planeada</h4>
+          <p>Validação do modelo com dados de uma época completa e publicação dos resultados</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">02 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 3: THE GAP -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-3">
+  <div class="label">Lacuna na Literatura</div>
+  <h2>As substituições são ainda <span class="gradient-text">decisões subjetivas</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-2" style="margin-top: 32px;">
+    <div>
+      <p class="subtitle" style="margin-bottom: 32px;">
+        Apesar da enorme quantidade de dados disponíveis no futebol moderno, a decisão de quando substituir um jogador continua a ser maioritariamente baseada na intuição do treinador.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="padding: 16px 20px; background: rgba(239,83,80,0.05); border: 1px solid rgba(239,83,80,0.1); border-radius: 10px;">
+          <p style="color: var(--red); font-weight: 600; font-size: 0.9rem;">Dados em silos separados</p>
+          <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 4px;">GPS num software, wellness numa folha, vídeo noutro — sem integração</p>
+        </div>
+        <div style="padding: 16px 20px; background: rgba(239,83,80,0.05); border: 1px solid rgba(239,83,80,0.1); border-radius: 10px;">
+          <p style="color: var(--red); font-weight: 600; font-size: 0.9rem;">Sem modelos preditivos para substituições</p>
+          <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 4px;">A literatura foca-se em prevenção de lesões, não no timing de substituição</p>
+        </div>
+        <div style="padding: 16px 20px; background: rgba(239,83,80,0.05); border: 1px solid rgba(239,83,80,0.1); border-radius: 10px;">
+          <p style="color: var(--red); font-weight: 600; font-size: 0.9rem;">Substituições tardias custam pontos</p>
+          <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 4px;">Estudos mostram que substituições no momento errado afetam o resultado final</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="padding: 28px; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🔬</div>
+        <h3 style="margin-bottom: 16px;">O que falta na investigação</h3>
+        <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
+          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+            <strong style="color: var(--text);">1.</strong> Um modelo que integre dados pré-jogo (carga semanal, wellness, risco) com dados em tempo real (GPS ao vivo) para prever queda de performance durante o jogo
+          </p>
+          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+            <strong style="color: var(--text);">2.</strong> Explicabilidade — o treinador precisa de saber <em>porquê</em>, não apenas <em>quando</em>
+          </p>
+          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+            <strong style="color: var(--text);">3.</strong> Validação com dados reais de jogos profissionais ao longo de uma época
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">03 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 4: WHAT WAS BUILT -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-4">
+  <div class="label">Trabalho Realizado</div>
+  <h2>Plataforma já <span class="gradient-text">desenvolvida</span></h2>
+  <div class="slide-divider"></div>
+  <p class="subtitle" style="margin-bottom: 32px;">
+    Para suportar esta investigação, foi desenvolvida uma plataforma completa de análise de performance que já integra todas as fontes de dados necessárias.
+  </p>
+
+  <div class="grid-3">
+    <div class="card" style="text-align: center;">
+      <div class="card-icon" style="background: rgba(255,193,7,0.1); margin: 0 auto 16px;">📥</div>
+      <h4>Ingestão Multi-fonte</h4>
+      <p>GPS (Catapult CSV), questionários PSE/Bem-estar, vídeo de treino e jogo</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="card-icon" style="background: rgba(76,175,80,0.1); margin: 0 auto 16px;">📊</div>
+      <h4>Métricas Avançadas</h4>
+      <p>ACWR, Monotonia, Tensão, Z-scores, Risk Assessment multi-fatorial</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="card-icon" style="background: rgba(168,85,247,0.1); margin: 0 auto 16px;">🧠</div>
+      <h4>ML + Explicabilidade</h4>
+      <p>XGBoost com 26 features e SHAP para predição de queda de performance</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="card-icon" style="background: rgba(0,188,212,0.1); margin: 0 auto 16px;">👁️</div>
+      <h4>Computer Vision</h4>
+      <p>YOLOv8 para deteção de jogadores e bola em vídeo de jogo</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="card-icon" style="background: rgba(239,83,80,0.1); margin: 0 auto 16px;">⚠️</div>
+      <h4>Avaliação de Risco</h4>
+      <p>Risco de lesão, performance e substituição com recomendações automáticas</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="card-icon" style="background: rgba(255,193,7,0.1); margin: 0 auto 16px;">📱</div>
+      <h4>Dashboard Interativo</h4>
+      <p>Interface profissional para staff técnico com visualizações em tempo real</p>
+    </div>
+  </div>
+
+  <div class="slide-number">04 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 5: DASHBOARD SCREENSHOTS -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-5">
+  <div class="label">Plataforma Desenvolvida</div>
+  <h2>Dashboard <span class="gradient-text">em funcionamento</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-2" style="margin-top: 32px;">
+    <div>
+      <p style="font-size: 0.75rem; font-weight: 600; color: var(--pitch); margin-bottom: 8px;">VISÃO GERAL — Métricas GPS, Risco, Carga</p>
+      <img src="screenshots/dashboard_overview.png" alt="Dashboard Overview" class="screenshot-img">
+    </div>
+    <div>
+      <p style="font-size: 0.75rem; font-weight: 600; color: var(--purple); margin-bottom: 8px;">ML — Predição de Queda com SHAP</p>
+      <img src="screenshots/dashboard_ml_prediction.png" alt="ML Prediction" class="screenshot-img">
+    </div>
+  </div>
+
+  <div style="margin-top: 24px; display: flex; gap: 16px;">
+    <div class="card" style="flex: 1; padding: 20px; text-align: center;">
+      <div class="stat-number gradient-text">26</div>
+      <div class="stat-label">Features no Modelo ML</div>
+    </div>
+    <div class="card" style="flex: 1; padding: 20px; text-align: center;">
+      <div class="stat-number gradient-text">6</div>
+      <div class="stat-label">Categorias de Dados</div>
+    </div>
+    <div class="card" style="flex: 1; padding: 20px; text-align: center;">
+      <div class="stat-number gradient-text">5</div>
+      <div class="stat-label">Fontes Integradas</div>
+    </div>
+    <div class="card" style="flex: 1; padding: 20px; text-align: center;">
+      <div class="stat-number gradient-text">100%</div>
+      <div class="stat-label">Explicabilidade SHAP</div>
+    </div>
+  </div>
+
+  <div class="slide-number">05 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 6: MORE MODULES -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-6">
+  <div class="label">Módulos da Plataforma</div>
+  <h2>Recolha e análise <span class="gradient-text">integrada</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-3" style="margin-top: 32px;">
+    <div>
+      <p style="font-size: 0.75rem; font-weight: 600; color: var(--cyan); margin-bottom: 8px;">GESTÃO DE ATLETAS</p>
+      <img src="screenshots/athletes.png" alt="Athletes" class="screenshot-img">
+      <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; line-height: 1.5;">
+        Perfis completos, dados físicos, estado e histórico de sessões por jogador.
+      </p>
+    </div>
+    <div>
+      <p style="font-size: 0.75rem; font-weight: 600; color: var(--gold); margin-bottom: 8px;">CARGA & RISCO</p>
+      <img src="screenshots/load_monitoring.png" alt="Load Monitoring" class="screenshot-img">
+      <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; line-height: 1.5;">
+        Monotonia, tensão e ACWR por posição. Classificação automática de risco.
+      </p>
+    </div>
+    <div>
+      <p style="font-size: 0.75rem; font-weight: 600; color: var(--red); margin-bottom: 8px;">ANÁLISE DE JOGO</p>
+      <img src="screenshots/game_analysis.png" alt="Game Analysis" class="screenshot-img">
+      <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; line-height: 1.5;">
+        Evolução de métricas ao longo dos jogos/treinos com comparação entre jogadores.
+      </p>
+    </div>
+  </div>
+
+  <div class="slide-number">06 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 7: ML APPROACH -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-7">
+  <div class="label">Abordagem Metodológica</div>
+  <h2>Machine Learning para <span class="gradient-text">Predição de Substituições</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-2" style="margin-top: 32px;">
+    <div>
+      <h4 style="color: var(--text-muted); margin-bottom: 16px;">Dados de Entrada (por jogador, por jogo)</h4>
+      <table class="feature-table">
+        <tr><th>Fonte</th><th>Dados</th><th>Timing</th></tr>
+        <tr><td><span class="badge badge-gold">GPS</span></td><td>Distância, sprints, acelerações, player load</td><td>Tempo real</td></tr>
+        <tr><td><span class="badge badge-red">Wellness</span></td><td>Fadiga, sono, dor muscular, wellness score</td><td>Pré-jogo</td></tr>
+        <tr><td><span class="badge badge-cyan">Carga</span></td><td>ACWR, monotonia, tensão, carga semanal</td><td>Pré-jogo</td></tr>
+        <tr><td><span class="badge badge-purple">Risco</span></td><td>Risco lesão, fadiga acumulada, wellness trend</td><td>Pré-jogo</td></tr>
+        <tr><td><span class="badge badge-green">Vídeo</span></td><td>Posicionamento, movimentação, padrões táticos</td><td>Tempo real</td></tr>
+      </table>
+
+      <div class="formula-box" style="margin-top: 20px; font-size: 0.75rem;">
+<span style="color: var(--gold);">Variável alvo:</span> Momento ótimo de substituição
+  = f(estado_pré_jogo, performance_em_jogo, contexto_tático)
+
+<span style="color: var(--cyan);">Modelo:</span> XGBoost + SHAP TreeExplainer
+<span style="color: var(--pitch);">Validação:</span> K-fold CV + validação temporal
+      </div>
+    </div>
+
+    <div>
+      <h4 style="color: var(--text-muted); margin-bottom: 16px;">Pipeline de Predição</h4>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="card" style="padding: 16px; border-left: 3px solid var(--gold);">
+          <h4 style="font-size: 0.9rem;">1. Estado Pré-Jogo</h4>
+          <p style="font-size: 0.8rem;">Carga acumulada, wellness, risco de lesão, histórico recente</p>
+        </div>
+        <div class="card" style="padding: 16px; border-left: 3px solid var(--cyan);">
+          <h4 style="font-size: 0.9rem;">2. Monitorização Em Jogo</h4>
+          <p style="font-size: 0.8rem;">GPS em tempo real: distância, sprints, intensidade por período</p>
+        </div>
+        <div class="card" style="padding: 16px; border-left: 3px solid var(--purple);">
+          <h4 style="font-size: 0.9rem;">3. Deteção de Queda</h4>
+          <p style="font-size: 0.8rem;">ML identifica padrões de declínio comparando com baseline do jogador</p>
+        </div>
+        <div class="card" style="padding: 16px; border-left: 3px solid var(--red);">
+          <h4 style="font-size: 0.9rem;">4. Recomendação Explicável</h4>
+          <p style="font-size: 0.8rem;">SHAP mostra ao treinador <em>porquê</em> substituir e <em>quando</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">07 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 8: WHAT IS NEEDED -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-8">
+  <div class="label">O Que Falta</div>
+  <h2>Para validar o modelo, preciso de <span class="gradient-text">dados reais</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-2" style="margin-top: 32px;">
+    <div>
+      <p class="subtitle" style="margin-bottom: 32px;">
+        A plataforma está construída e funcional. O modelo de predição de queda de performance já funciona com dados de treino. Para estender à <strong style="color: var(--gold);">predição de substituições em jogo</strong>, preciso de dados reais de competição.
+      </p>
+
+      <h4 style="color: var(--text-muted); margin-bottom: 16px;">Dados necessários do clube:</h4>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--dark-200); border-radius: 10px; border: 1px solid rgba(255,255,255,0.04);">
+          <span style="color: var(--gold); font-size: 1.2rem;">⌚</span>
+          <div>
+            <p style="font-weight: 600; font-size: 0.9rem;">Exports GPS de jogos e treinos</p>
+            <p style="color: var(--text-dim); font-size: 0.75rem;">Catapult/STATSports CSV — já suportado pela plataforma</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--dark-200); border-radius: 10px; border: 1px solid rgba(255,255,255,0.04);">
+          <span style="color: var(--red); font-size: 1.2rem;">❤️</span>
+          <div>
+            <p style="font-weight: 600; font-size: 0.9rem;">Questionários de bem-estar / PSE</p>
+            <p style="color: var(--text-dim); font-size: 0.75rem;">Fadiga, sono, dor muscular — diários ou pré-sessão</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--dark-200); border-radius: 10px; border: 1px solid rgba(255,255,255,0.04);">
+          <span style="color: var(--cyan); font-size: 1.2rem;">🔄</span>
+          <div>
+            <p style="font-weight: 600; font-size: 0.9rem;">Registos de substituições em jogo</p>
+            <p style="color: var(--text-dim); font-size: 0.75rem;">Minuto, jogador substituído, jogador que entrou, contexto</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--dark-200); border-radius: 10px; border: 1px solid rgba(255,255,255,0.04);">
+          <span style="color: var(--purple); font-size: 1.2rem;">🎥</span>
+          <div>
+            <p style="font-weight: 600; font-size: 0.9rem;">Vídeo de jogos (opcional)</p>
+            <p style="color: var(--text-dim); font-size: 0.75rem;">Para análise de computer vision — posicionamento e padrões táticos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="padding: 28px; border: 1px solid rgba(76,175,80,0.2);">
+        <h4 style="color: var(--pitch); margin-bottom: 16px;">Duração estimada da recolha</h4>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <div class="stat-number gradient-text" style="font-size: 2rem;">1 Época</div>
+            <div class="stat-label">Período ideal de recolha de dados</div>
+          </div>
+          <div style="border-top: 1px solid rgba(255,255,255,0.04); padding-top: 16px;">
+            <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">
+              <strong style="color: var(--text);">Mínimo viável:</strong> ~20 jogos oficiais com dados GPS completos e registos de substituições
+            </p>
+          </div>
+          <div style="border-top: 1px solid rgba(255,255,255,0.04); padding-top: 16px;">
+            <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">
+              <strong style="color: var(--text);">Ideal:</strong> Época completa (~40 jogos) + treinos semanais + wellness diário
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 20px; margin-top: 16px; background: rgba(76,175,80,0.03); border: 1px solid rgba(76,175,80,0.15);">
+        <p style="color: var(--pitch); font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">Impacto zero no dia-a-dia do clube</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.5;">
+          A plataforma consome dados que o clube já recolhe (GPS, wellness). Não requer mudanças nos processos existentes — apenas acesso aos exports.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">08 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 9: WHAT THE CLUB GETS -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-9">
+  <div class="label">Benefícios para o Clube</div>
+  <h2>O que o clube <span class="gradient-text">ganha</span> com esta colaboração</h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-3" style="margin-top: 40px;">
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">📊</div>
+      <h4>Acesso gratuito à plataforma</h4>
+      <p>Dashboard completo de monitorização de performance, carga e risco — sem custos para o clube durante toda a colaboração.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">🧠</div>
+      <h4>Predições ML personalizadas</h4>
+      <p>Modelo treinado especificamente com os dados do clube — predições de queda de performance e recomendações de substituição.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">📋</div>
+      <h4>Relatórios de investigação</h4>
+      <p>Acesso aos resultados da investigação: padrões de performance, fatores de risco e insights específicos do plantel.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">🔒</div>
+      <h4>Confidencialidade total</h4>
+      <p>Dados anonimizados na publicação. Acordo de confidencialidade formal. O clube controla o que é partilhado.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">🎓</div>
+      <h4>Inovação científica</h4>
+      <p>Associação do clube a investigação de ponta em ciências do desporto e inteligência artificial aplicada ao futebol.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">🔧</div>
+      <h4>Suporte técnico contínuo</h4>
+      <p>Manutenção e evolução da plataforma durante toda a colaboração, adaptada às necessidades do staff técnico.</p>
+    </div>
+  </div>
+
+  <div class="slide-number">09 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 10: ARCHITECTURE -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-10">
+  <div class="label">Arquitetura Técnica</div>
+  <h2>Stack <span class="gradient-text">Tecnológico</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="arch-diagram" style="margin-top: 32px;">
+    <div class="arch-layer">
+      <div class="arch-label">Fontes de Dados</div>
+      <div class="arch-boxes">
+        <div class="arch-box" style="background: rgba(255,193,7,0.08); border-color: rgba(255,193,7,0.2); color: var(--gold);">⌚ GPS (Catapult)</div>
+        <div class="arch-box" style="background: rgba(239,83,80,0.08); border-color: rgba(239,83,80,0.2); color: var(--red);">❤️ PSE / Wellness</div>
+        <div class="arch-box" style="background: rgba(0,188,212,0.08); border-color: rgba(0,188,212,0.2); color: var(--cyan);">🔄 Substituições</div>
+        <div class="arch-box" style="background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.2); color: var(--purple);">🎥 Vídeo</div>
+      </div>
+    </div>
+    <div class="arch-layer"><div class="arch-arrow"><div class="arch-arrow-line"></div></div></div>
+    <div class="arch-layer">
+      <div class="arch-label">Backend</div>
+      <div class="arch-boxes">
+        <div class="arch-box" style="background: rgba(76,175,80,0.08); border-color: rgba(76,175,80,0.2); color: var(--pitch);">🐍 FastAPI (Python)</div>
+        <div class="arch-box" style="background: rgba(76,175,80,0.08); border-color: rgba(76,175,80,0.2); color: var(--pitch);">🗄️ PostgreSQL</div>
+      </div>
+    </div>
+    <div class="arch-layer"><div class="arch-arrow"><div class="arch-arrow-line"></div></div></div>
+    <div class="arch-layer">
+      <div class="arch-label">Machine Learning</div>
+      <div class="arch-boxes">
+        <div class="arch-box" style="background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.2); color: var(--purple);">🧠 XGBoost</div>
+        <div class="arch-box" style="background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.2); color: var(--purple);">📊 SHAP</div>
+        <div class="arch-box" style="background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.2); color: var(--purple);">👁️ YOLOv8</div>
+      </div>
+    </div>
+    <div class="arch-layer"><div class="arch-arrow"><div class="arch-arrow-line"></div></div></div>
+    <div class="arch-layer">
+      <div class="arch-label">Frontend</div>
+      <div class="arch-boxes">
+        <div class="arch-box" style="background: rgba(0,188,212,0.08); border-color: rgba(0,188,212,0.2); color: var(--cyan);">⚛️ React + Tailwind</div>
+        <div class="arch-box" style="background: rgba(0,188,212,0.08); border-color: rgba(0,188,212,0.2); color: var(--cyan);">📱 Dashboard</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">10 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 11: SCIENTIFIC FOUNDATION -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-11">
+  <div class="label">Fundamentação Científica</div>
+  <h2>Baseado em <span class="gradient-text">investigação</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-2" style="margin-top: 32px;">
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>ACWR — Acute:Chronic Workload Ratio</h4>
+        <p>Gabbett, T.J. (2016). The training-injury prevention paradox. <em>British Journal of Sports Medicine</em>.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Monitorização de Carga de Treino</h4>
+        <p>Bourdon, P.C. et al. (2017). Monitoring athlete training loads. <em>Int. J. Sports Physiology and Performance</em>.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Substituições e Performance</h4>
+        <p>Bradley, P.S. et al. (2014). The effect of playing formation on high-intensity running and technical profiles. <em>J. Sports Sciences</em>.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>SHAP — Explicabilidade em ML</h4>
+        <p>Lundberg, S.M. & Lee, S.I. (2017). A unified approach to interpreting model predictions. <em>NeurIPS</em>.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>XGBoost em Dados Desportivos</h4>
+        <p>Bunker, R.P. & Thabtah, F. (2019). A machine learning framework for sport result prediction. <em>Applied Computing and Informatics</em>.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom: 20px;">
+        <h4 style="margin-bottom: 12px;">🔬 Metodologia de Investigação</h4>
+        <ul style="color: var(--text-muted); font-size: 0.85rem; line-height: 2; list-style: none;">
+          <li>✓ Revisão sistemática da literatura</li>
+          <li>✓ Desenvolvimento da plataforma de recolha</li>
+          <li>✓ Feature engineering baseado em evidência</li>
+          <li>✓ Validação cruzada temporal (K-fold CV)</li>
+          <li>✓ Explicabilidade com SHAP values</li>
+          <li>✓ Validação ecológica com dados reais de jogo</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom: 12px;">📄 Publicações Previstas</h4>
+        <ul style="color: var(--text-muted); font-size: 0.85rem; line-height: 2; list-style: none;">
+          <li>✓ Artigo 1: Plataforma de integração multi-fonte</li>
+          <li>✓ Artigo 2: Modelo de predição de substituições</li>
+          <li>✓ Artigo 3: Validação com dados de época completa</li>
+          <li>✓ Tese de doutoramento</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">11 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 12: CONFIDENTIALITY -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-12">
+  <div class="label">Ética e Confidencialidade</div>
+  <h2>Proteção de dados <span class="gradient-text">garantida</span></h2>
+  <div class="slide-divider"></div>
+
+  <div class="grid-3" style="margin-top: 40px;">
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">🔒</div>
+      <h4>Acordo de Confidencialidade</h4>
+      <p>Assinatura de NDA formal antes do início da colaboração. O clube aprova toda a informação antes de qualquer publicação.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">👤</div>
+      <h4>Anonimização</h4>
+      <p>Todos os dados publicados são anonimizados. Nomes de jogadores, staff e clube são codificados nas publicações.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 16px;">✅</div>
+      <h4>Comissão de Ética</h4>
+      <p>Estudo aprovado pela comissão de ética da universidade. Consentimento informado de todos os participantes.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px; padding: 28px; background: var(--dark-200); border: 1px solid rgba(76,175,80,0.15); border-radius: 16px;">
+    <div class="grid-2" style="gap: 32px;">
+      <div>
+        <h4 style="margin-bottom: 12px;">O clube mantém controlo total sobre:</h4>
+        <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 2; list-style: none;">
+          <li>✓ Quais dados são partilhados com o investigador</li>
+          <li>✓ Aprovação prévia de qualquer publicação</li>
+          <li>✓ Direito de retirada a qualquer momento</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">O investigador compromete-se a:</h4>
+        <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 2; list-style: none;">
+          <li>✓ Não partilhar dados com terceiros</li>
+          <li>✓ Eliminar dados brutos após conclusão do estudo</li>
+          <li>✓ Disponibilizar todos os resultados ao clube</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-number">12 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 13: LIVE DEMO -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-13" style="justify-content: center; align-items: center; text-align: center;">
+  <div class="label">Demonstração</div>
+  <h1 style="max-width: 800px;">
+    <span class="gradient-text">Demonstração da Plataforma</span>
+  </h1>
+  <div class="slide-divider" style="margin: 24px auto;"></div>
+  <p class="subtitle" style="text-align: center; margin: 0 auto 40px;">
+    Plataforma funcional com dados de teste — pronta para receber dados reais do clube.
+  </p>
+
+  <div class="grid-2" style="max-width: 900px; margin: 0 auto;">
+    <div>
+      <img src="screenshots/dashboard_overview.png" alt="Dashboard" class="screenshot-img" style="opacity: 0.8;">
+    </div>
+    <div>
+      <img src="screenshots/dashboard_ml_prediction.png" alt="ML Prediction" class="screenshot-img" style="opacity: 0.8;">
+    </div>
+  </div>
+
+  <div class="slide-number">13 / 14</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 14: CLOSING -->
+<!-- ============================================================ -->
+<section class="slide" id="slide-14" style="justify-content: center; align-items: center; text-align: center;">
+  <div class="label">Proposta de Colaboração</div>
+  <h1 style="max-width: 800px;">
+    Vamos construir isto <span class="gradient-text">juntos?</span>
+  </h1>
+  <div class="slide-divider" style="margin: 24px auto;"></div>
+  <p class="subtitle" style="text-align: center; margin: 0 auto 40px;">
+    A plataforma está pronta. O modelo está implementado.<br>
+    Para dar o próximo passo — prever substituições em jogo — <strong style="color: var(--pitch);">preciso da vossa colaboração</strong>.
+  </p>
+
+  <div class="grid-4" style="max-width: 900px; margin: 0 auto 48px;">
+    <div class="card" style="text-align: center; padding: 20px;">
+      <div style="font-size: 1.5rem; margin-bottom: 8px;">📊</div>
+      <h4 style="font-size: 0.9rem;">Dados GPS</h4>
+      <p style="font-size: 0.75rem;">Exports de jogos e treinos</p>
+    </div>
+    <div class="card" style="text-align: center; padding: 20px;">
+      <div style="font-size: 1.5rem; margin-bottom: 8px;">❤️</div>
+      <h4 style="font-size: 0.9rem;">Wellness</h4>
+      <p style="font-size: 0.75rem;">Questionários diários</p>
+    </div>
+    <div class="card" style="text-align: center; padding: 20px;">
+      <div style="font-size: 1.5rem; margin-bottom: 8px;">🔄</div>
+      <h4 style="font-size: 0.9rem;">Substituições</h4>
+      <p style="font-size: 0.75rem;">Registos de jogo</p>
+    </div>
+    <div class="card" style="text-align: center; padding: 20px;">
+      <div style="font-size: 1.5rem; margin-bottom: 8px;">🎥</div>
+      <h4 style="font-size: 0.9rem;">Vídeo</h4>
+      <p style="font-size: 0.75rem;">Opcional</p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px;">
+    <span class="badge badge-green" style="font-size: 0.85rem; padding: 8px 20px;">Custo zero para o clube</span>
+    <span class="badge badge-cyan" style="font-size: 0.85rem; padding: 8px 20px;">Confidencialidade total</span>
+    <span class="badge badge-gold" style="font-size: 0.85rem; padding: 8px 20px;">Plataforma gratuita</span>
+    <span class="badge badge-purple" style="font-size: 0.85rem; padding: 8px 20px;">Resultados partilhados</span>
+  </div>
+
+  <p style="color: var(--text-dim); font-size: 0.9rem;">
+    [Nome do Investigador] · [Universidade] · [Email] · [Contacto]
+  </p>
+  <p style="margin-top: 16px; color: var(--text-dim); font-size: 0.85rem;">
+    Obrigado pela atenção.
+  </p>
+
+  <div class="slide-number">14 / 14</div>
+</section>
+
+<!-- ===== NAVIGATION SCRIPT ===== -->
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const navDots = document.getElementById('navDots');
+
+  // Create nav dots
+  slides.forEach((slide, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot';
+    dot.title = `Slide ${i + 1}`;
+    dot.addEventListener('click', () => {
+      slide.scrollIntoView({ behavior: 'smooth' });
+    });
+    navDots.appendChild(dot);
+  });
+
+  // Highlight active dot on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = Array.from(slides).indexOf(entry.target);
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(s => observer.observe(s));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const dots = document.querySelectorAll('.nav-dot');
+    const activeIdx = Array.from(dots).findIndex(d => d.classList.contains('active'));
+
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') && activeIdx < slides.length - 1) {
+      e.preventDefault();
+      slides[activeIdx + 1].scrollIntoView({ behavior: 'smooth' });
+    } else if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && activeIdx > 0) {
+      e.preventDefault();
+      slides[activeIdx - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+
+</body>
+</html>
