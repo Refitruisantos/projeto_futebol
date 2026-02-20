@@ -330,8 +330,34 @@
 
     /* ===== PRINT ===== */
     @media print {
-      .slide { page-break-after: always; min-height: auto; padding: 40px; }
+      body { background: white; }
+      
+      .slide { 
+        page-break-after: always; 
+        page-break-inside: avoid;
+        min-height: 100vh;
+        max-height: 100vh;
+        padding: 60px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      
+      .slide:last-of-type { page-break-after: avoid; }
+      
       .nav-dots { display: none; }
+      
+      .slide-number { 
+        position: absolute;
+        bottom: 30px;
+        right: 40px;
+      }
+      
+      /* Ensure backgrounds and colors print */
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
 
     /* ===== TIMELINE ===== */
