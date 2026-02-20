@@ -330,33 +330,57 @@
 
     /* ===== PRINT ===== */
     @media print {
-      body { background: white; }
+      /* Force dark backgrounds to print */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      
+      html, body { 
+        background: var(--dark-100) !important;
+        margin: 0;
+        padding: 0;
+      }
       
       .slide { 
         page-break-after: always; 
         page-break-inside: avoid;
         min-height: 100vh;
         max-height: 100vh;
+        height: 100vh;
         padding: 60px 80px;
-        display: flex;
+        display: flex !important;
         flex-direction: column;
         justify-content: center;
+        background: var(--dark-100) !important;
+        position: relative;
+      }
+      
+      .slide::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: radial-gradient(ellipse at 20% 50%, rgba(76,175,80,0.03) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 20%, rgba(0,188,212,0.02) 0%, transparent 50%) !important;
+        pointer-events: none;
       }
       
       .slide:last-of-type { page-break-after: avoid; }
       
-      .nav-dots { display: none; }
+      .nav-dots { display: none !important; }
       
-      .slide-number { 
-        position: absolute;
-        bottom: 30px;
-        right: 40px;
+      .card {
+        background: var(--dark-200) !important;
+        border: 1px solid rgba(255,255,255,0.06) !important;
       }
       
-      /* Ensure backgrounds and colors print */
-      * {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+      .screenshot-placeholder {
+        background: var(--dark-300) !important;
+      }
+      
+      .formula-box {
+        background: var(--dark-300) !important;
       }
     }
 
