@@ -45,7 +45,9 @@ async def export_to_pdf():
         async with async_playwright() as p:
             # Launch browser in headless mode
             browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page(viewport={'width': 1920, 'height': 1080})
+            
+            # Use larger viewport to prevent text cutoff
+            page = await browser.new_page(viewport={'width': 1600, 'height': 1200})
             
             # Set dark mode preference
             await page.emulate_media(color_scheme='dark')
@@ -58,19 +60,20 @@ async def export_to_pdf():
             await page.wait_for_load_state('networkidle')
             await asyncio.sleep(3)  # Extra wait for fonts and animations
             
-            # Export to PDF with all backgrounds
+            # Export to PDF with all backgrounds and proper margins
             await page.pdf(
                 path=str(pdf_file),
                 format='A4',
                 print_background=True,
                 margin={
-                    'top': '0',
-                    'right': '0',
-                    'bottom': '0',
-                    'left': '0'
+                    'top': '20px',
+                    'right': '20px',
+                    'bottom': '20px',
+                    'left': '20px'
                 },
                 prefer_css_page_size=False,
-                display_header_footer=False
+                display_header_footer=False,
+                scale=0.95  # Slightly reduce scale to prevent cutoff
             )
             
             await browser.close()
